@@ -25,11 +25,9 @@ async fn main() {
                     .data(StarWars::new())
                     .finish();
 
-                let (method, path) = (req.method().to_owned(), req.uri().path().to_owned());
-
-                match (method, path.as_str()) {
-                    (Method::GET, "/") | (Method::GET, "/index.html") => Ok::<_, Infallible>(graphiql()),
-                    (Method::POST, "/") => {
+                match (req.method(), req.uri().path()) {
+                    (&Method::GET, "/") | (&Method::GET, "/index.html") => Ok::<_, Infallible>(graphiql()),
+                    (&Method::POST, "/") => {
                         let content_type = req
                             .headers()
                             .get(header::CONTENT_TYPE)
@@ -57,7 +55,7 @@ async fn main() {
 
                         Ok::<_, Infallible>(response)
                     }
-                    _ => { // Return 404 not found response.
+                    _ => {
                         Ok::<_, Infallible>(Response::builder()
                             .status(StatusCode::NOT_FOUND)
                             .body(Body::from("Not Found"))
