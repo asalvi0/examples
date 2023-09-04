@@ -34,6 +34,8 @@ members = [
     "axum/upload",
     "axum/token-from-header",
 
+    "hyper/starwars",
+
     "tide/starwars",
     "tide/dataloader",
     "tide/dataloader-postgres",
