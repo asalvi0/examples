@@ -7,8 +7,6 @@ use hyper::service::{make_service_fn, service_fn};
 use async_graphql::{BatchRequest, EmptyMutation, EmptySubscription, http::GraphiQLSource, Schema};
 use starwars::{QueryRoot, StarWars};
 
-static NOTFOUND: &str = "Not Found";
-
 fn graphiql() -> Response<Body> {
     let html = GraphiQLSource::build().endpoint("/").finish();
 
@@ -62,7 +60,7 @@ async fn main() {
                     _ => { // Return 404 not found response.
                         Ok::<_, Infallible>(Response::builder()
                             .status(StatusCode::NOT_FOUND)
-                            .body(Body::from(NOTFOUND))
+                            .body(Body::from("Not Found"))
                             .unwrap())
                     }
                 }
