@@ -1,25 +1,27 @@
-use std::{fmt::Write, sync::Arc};
+use std::sync::Arc;
 
-use async_graphql::{async_trait, PathSegment, Response, ServerResult, Value, Variables};
+use async_graphql::{async_trait, Name, Response, ServerResult, Value, Variables};
 use async_graphql::extensions::{Extension, ExtensionContext, ExtensionFactory, NextExecute, NextParseQuery, NextResolve, ResolveInfo};
+use async_graphql::indexmap::IndexMap;
 use async_graphql::parser::types::{ExecutableDocument, OperationType, Selection};
+use async_graphql_value::ConstValue;
 
-pub(crate) struct NeureloExtension;
+pub(crate) struct CustomExtension;
 
-impl NeureloExtension {
+impl CustomExtension {
     pub fn new() -> Self {
         Self {}
     }
 }
 
-impl ExtensionFactory for NeureloExtension {
+impl ExtensionFactory for CustomExtension {
     fn create(&self) -> Arc<dyn Extension> {
-        Arc::new(NeureloExtension)
+        Arc::new(CustomExtension)
     }
 }
 
 #[async_trait::async_trait]
-impl Extension for NeureloExtension {
+impl Extension for CustomExtension {
     async fn parse_query(
         &self,
         ctx: &ExtensionContext<'_>,
@@ -46,6 +48,13 @@ impl Extension for NeureloExtension {
         operation_name: Option<&str>,
         next: NextExecute<'_>,
     ) -> Response {
+        // call your custom logic and convert it to the proper response type: `IndexMap<Name, ConstValue>`
+        let mut data: IndexMap<Name, ConstValue> = IndexMap::new();
+        let resp = Response::new(data);
+        
+        resp
+        
+        /*
         let resp = next.run(ctx, operation_name).await;
         if resp.is_err() {
             for err in &resp.errors {
@@ -71,22 +80,6 @@ impl Extension for NeureloExtension {
                 }
             }
         }
-        resp
-    }
-
-    /// Called at resolve field.
-    async fn resolve(
-        &self,
-        ctx: &ExtensionContext<'_>,
-        info: ResolveInfo<'_>,
-        next: NextResolve<'_>,
-    ) -> ServerResult<Option<Value>> {
-        // Logic before resolving the field
-        let result = next.run(ctx, info).await;
-
-        println!("{:?}", result);
-
-        // Logic after resolving the field
-        result
+        */
     }
 }
