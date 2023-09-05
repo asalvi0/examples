@@ -8,7 +8,7 @@ use hyper::service::{make_service_fn, service_fn};
 
 use async_graphql::{BatchRequest, EmptyMutation, EmptySubscription, http::GraphiQLSource, Schema};
 use starwars::{QueryRoot, StarWars};
-use crate::custom_extension::NeureloExtension;
+use crate::custom_extension::CustomExtension;
 
 fn graphiql() -> Response<Body> {
     let html = GraphiQLSource::build().endpoint("/").finish();
@@ -24,7 +24,7 @@ async fn main() {
     let make_svc = make_service_fn(|_| {
         async move {
             Ok::<_, Infallible>(service_fn(move |req: Request<Body>| async move {
-                let ext = NeureloExtension::new();
+                let ext = CustomExtension::new();
 
                 let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
                     .data(StarWars::new())
