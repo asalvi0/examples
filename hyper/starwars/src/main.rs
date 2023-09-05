@@ -1,3 +1,5 @@
+mod custom_extension;
+
 use std::convert::Infallible;
 
 use hyper::{Body, header, Method, Request, Response, Server, StatusCode};
@@ -6,6 +8,7 @@ use hyper::service::{make_service_fn, service_fn};
 
 use async_graphql::{BatchRequest, EmptyMutation, EmptySubscription, http::GraphiQLSource, Schema};
 use starwars::{QueryRoot, StarWars};
+use crate::custom_extension::NeureloExtension;
 
 fn graphiql() -> Response<Body> {
     let html = GraphiQLSource::build().endpoint("/").finish();
@@ -21,8 +24,11 @@ async fn main() {
     let make_svc = make_service_fn(|_| {
         async move {
             Ok::<_, Infallible>(service_fn(move |req: Request<Body>| async move {
+                let ext = NeureloExtension::new();
+
                 let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
                     .data(StarWars::new())
+                    .extension(ext)
                     .finish();
 
                 match (req.method(), req.uri().path()) {
