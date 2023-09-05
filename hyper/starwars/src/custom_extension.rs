@@ -48,7 +48,7 @@ impl Extension for CustomExtension {
         operation_name: Option<&str>,
         next: NextExecute<'_>,
     ) -> Response {
-        // call your custom logic and convert it to the proper response type: `IndexMap<Name, ConstValue>`
+        // call your custom logic and convert the response to the proper type: `IndexMap<Name, ConstValue>`
         let mut data: IndexMap<Name, ConstValue> = IndexMap::new();
         let resp = Response::new(data);
         
